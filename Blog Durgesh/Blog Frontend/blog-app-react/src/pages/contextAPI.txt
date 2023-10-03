@@ -1,0 +1,14 @@
+1. create context
+
+context=createContext(null)
+// conext has two things
+    Provider-provides
+    Consumer-consumes
+
+2. wrap our components in Provider
+
+<context.Provider default={user}>
+    {children}
+</context.Provider>
+
+3.
