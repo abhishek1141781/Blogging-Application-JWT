@@ -1,0 +1,1072 @@
+1) 
+PROBLEM:
+useSubmit must be used within a data router.  See https://reactrouter.com/routers/picking-a-router.
+
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+import { Card, CardBody, CardHeader, Container, FormGroup, Input, Label } from "reactstrap";
+import Base from "../components/Base";
+import { Form } from "react-router-dom";				SOLUTION----------------------------> import from reactstrap and not react-router-dom
+
+const Signup = () => {
+    return (
+        <Base>
+            <Container>
+                <Card>
+                    <CardHeader>
+                        Fill information to register
+                    </CardHeader>
+                    <CardBody>
+                        {/* creating form */}
+                        <Form>
+                            
+                        </Form>
+                    </CardBody>
+                </Card>
+            </Container>
+        </Base>
+    )
+}
+
+export default Signup;
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+
+
+SOLUTION:
+
+
+
+
+
+2)
+ERROR: 
+"right" property of "DropdownMenu" has been deprecated.
+Please use "end" instead.
+
+                        <NavItem>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav caret>
+                                    Socials
+                                </DropdownToggle>
+                                <DropdownMenu right>		SOLUTION:---------------------------> use end in place of right
+                                    <DropdownItem>Instagram</DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem>Reset</DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
+                        </NavItem>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3)
+PROBLEM:
+react-dom.development.js:86 Warning: State updates from the useState() and useReducer() Hooks don't support the second callback argument. To execute a side effect after rendering, declare it in the component body with useEffect().
+
+                                        <Label for='name'>Enter Name</Label>
+                                        <Input
+                                            type="text"
+                                            placeholder="Enter here"
+                                            id="name"
+                                            onChange={(e)=>handleChange(e)}
+                                        />
+
+
+    const [data,setData]=useState({
+        name:'',
+        email:'',
+        password:'',
+        about:''
+    })
+
+    //handle change
+    const handleChange=(event)=>{
+        // console.log("handleChange")
+        setData({...data,name:event.target.value},()=>{
+            console.log(data);
+        });        
+    }
+
+
+4)
+PROBLEM: CORS Policy
+Access to XMLHttpRequest at 'http://localhost:5000/api/v1/auth/register' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+SOLUTION:
+due to a Cross-Origin Resource Sharing (CORS) issue. CORS is a security feature implemented by web browsers to restrict web pages from making requests to domains other than the one that served the web page. It's a security mechanism to prevent potential security vulnerabilities.
+
+
+
+
+5)
+PROBLEM: 
+Signup.js:113 Uncaught TypeError: Cannot read properties of undefined (reading 'data')
+
+                                    {/* Name Field */}
+                                    <FormGroup>
+                                        <Label for='name'>Enter Name</Label>
+                                        <Input
+                                            type="text"
+                                            placeholder="Enter here"
+                                            id="name"
+                                            onChange={(e)=>handleChange(e,'name')}
+                                            value={data.name}
+Wrong:                                            invalid={error.errors.response.data.name ? true : false}
+Right:                                              invalid={error.errors?.response?.data?.name ? true : false}
+                                        />
+
+SOLUTION: // using null safe, as in if a property doesn't have any value and if we still try to find something in it it'll break the code
+		so only search for data in response if response is not null, and only search for data in data if data is not null
+
+
+
+
+6)
+to get rid of invalid message
+under signUp function, below success log, add  setError({ ...error, isError: false, errors: "" });
+
+
+
+
+
+
+
+7)
+
+PROBLEM: AXIOS NOT SENDING AUTHORIZATION HEADER - REACTJS-SPRINGBOOT
+AddPost.jsx:65 
+created the post after preventing the def act after sub buttn pressed[object Object]
+----------------------------------------------------------------------------------------------------------------------------------
+PostService.js:5 
+postData recieved by the writePost func, which'll hit data to the mapped url[object Object]
+----------------------------------------------------------------------------------------------------------------------------------
+helper.js:22 
+inside the privateAxios.i.r.use & inside if(token): eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ0aW5lbGxpQGdtYWlsLmNvbSIsImV4cCI6MTY5NjAxMTkxOSwiaWF0IjoxNjk1OTkzOTE5fQ.fwcyBdXtCdmXRh-_N0PlY8wSB3ej1krJdA-Yfx4ZvttX1u_u0jlRvLZYgg0s4OUvYasD_EVEmKuYw_nVGeTFAQ
+dashboard:1  
+----------------------------------------------------------------------------------------------------------------------------------
+Access to XMLHttpRequest at 'http://localhost:5000/api/v1/user/$%7BpostData.userId%7D/category/$%7BpostData.id%7D/posts' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+----------------------------------------------------------------------------------------------------------------------------------
+PostService.js:10 
+console.log from => PostService => servicesArea: AxiosError: Network Error
+----------------------------------------------------------------------------------------------------------------------------------
+AddPost.jsx:83 
+logging after post created: [object Object]
+----------------------------------------------------------------------------------------------------------------------------------
+xhr.js:256 
+POST http://localhost:5000/api/v1/user/$%7BpostData.userId%7D/category/$%7BpostData.id%7D/posts net::ERR_FAILED
+
+SOLUTION:
+finally, i found the problem. problem was with my cors configuration on the server side. when request is triggered it firstly goes to the spring cors filter, which is rejecting request, and it's never triggering my cors filter. so i have to set order of triggering, something like that:
+
+filterregistrationbean bean = new filterregistrationbean(new corsfilter(source));
+    bean.setorder(-110);
+
+
+
+
+
+
+
+8)
+PROBLEM: blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+Access to XMLHttpRequest at 'http://localhost:5000/api/v1/user/$%7BpostData.userId%7D/category/$%7BpostData.id%7D/posts' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+
+SOLUTION:
+	@Bean
+	public FilterRegistrationBean corsFilter() {
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+		CorsConfiguration corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowCredentials(true);
+		corsConfiguration.addAllowedOriginPattern("*");
+		corsConfiguration.addAllowedHeader("Authorization");
+		corsConfiguration.addAllowedHeader("Content-Type");
+		corsConfiguration.addAllowedHeader("Accept");
+		corsConfiguration.addAllowedMethod("POST");
+		corsConfiguration.addAllowedMethod("GET");
+		corsConfiguration.addAllowedMethod("DELETE");
+		corsConfiguration.addAllowedMethod("PUT");
+		corsConfiguration.addAllowedMethod("OPTIONS");
+		corsConfiguration.setMaxAge(3600L);
+
+		source.registerCorsConfiguration("/**", corsConfiguration);
+
+		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+
+		bean.setOrder(-110);						      ------> added this line in security config in backend code
+
+		return bean;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9)
+PROBLEM: blocked by CORS policy: Request header field common is not allowed by Access-Control-Allow-Headers in preflight response
+
+Access to XMLHttpRequest at 'http://localhost:5000/api/v1/user/$%7BpostData.userId%7D/category/$%7BpostData.id%7D/posts' from origin 'http://localhost:3000' has been blocked by CORS policy: Request header field common is not allowed by Access-Control-Allow-Headers in preflight response
+
+ 
+SOLUTION:
+		corsConfiguration.addAllowedHeader("common");                 ------------------------> added this in SecurityConfig class
+
+
+
+
+
+
+
+
+
+
+
+
+
+10)
+PROBLEM: 		POST http://localhost:5000/api/v1/user/7/category/2/posts 		401 (Unauthorized)
+Cannot set properties of undefined (setting 'Authorization')
+
+privateAxios.interceptors.request.use(config => {
+
+    const token = getToken()
+    if (token) {
+        config.headers.common.Authorization = `Bearer ${token}`		----->SOLUTION: new version doesn't need the common header, remove it
+    }
+    return config
+}, error => Promise.reject("error => Promise.reject & inside the privateAxios.i.r.use : "+error))
+
+
+
+
+
+
+11)
+PROBLEM:
+Uncaught Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.
+
+SOLUTION:
+import React from 'react'
+import { Button, Card, CardBody, CardText } from 'reactstrap'
+
+PROBLEM:	export const Post=(title = "default post tilte", content = "default post content")=> {
+SOLUTION:	export const Post=({title = "default post tilte", content = "default post content"})=> {
+    return (
+        <Card className='border-0 shadow-sm mt-3'>
+            <CardBody>
+                <h1>{title}</h1>
+                <CardText>
+                    <p>{content}</p>
+                </CardText>
+                <Button>Read More</Button>
+            </CardBody>
+        </Card>
+    )
+}
+
+export default Post
+
+DETAILS:
+=====================================================================================================================================
+=====================================================================================================================================
+=====================================================================================================================================
+The error you're encountering, "Uncaught Error: Objects are not valid as a React child," occurs when you're trying to directly render an object as a child element in React. In your `Post` component, you are providing default values for `title` and `content` as objects. React expects children to be either valid React elements or strings, not plain objects.
+
+To resolve this issue, you can ensure that the `title` and `content` parameters passed to your `Post` component are always strings. Here's an updated version of your `Post` component:
+
+```jsx
+import React from 'react'
+import { Button, Card, CardBody, CardText } from 'reactstrap'
+
+export const Post = ({ title = "default post title", content = "default post content" }) => {
+    return (
+        <Card className='border-0 shadow-sm mt-3'>
+            <CardBody>
+                <h1>{title}</h1>
+                <CardText>
+                    <p>{content}</p>
+                </CardText>
+                <Button>Read More</Button>
+            </CardBody>
+        </Card>
+    )
+}
+
+export default Post
+```
+
+Now, the `title` and `content` parameters are destructured from the props object and are provided with default string values. This ensures that you won't encounter the "Objects are not valid as a React child" error when rendering the component. You can call the `Post` component like this:
+
+```jsx
+<Post title="Custom Title" content="Custom Content" />
+```
+
+Or, if you want to use the default values:
+
+```jsx
+<Post />
+```
+
+Make sure that you pass string values to the `title` and `content` props when using the `Post` component to avoid the error.
+=====================================================================================================================================
+=====================================================================================================================================
+=====================================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+12)
+PROBLEM:
+export const Post=({title = "default post tilte", content = "default post content"})=> {
+
+export const Post=(title = "default post tilte", content = "default post content")=> {
+
+what does the `{`  `}` signify
+
+
+SOLUTION:
+The `{}` in the function parameter is not related to JSX curly braces `{}` used for defining JSX elements; it's a JavaScript syntax for object destructuring.
+
+
+
+The `{}` (curly braces) in the function parameter of `Post` component are used for destructuring the props object. Here's an explanation of how it works:
+
+In the line:
+
+```jsx
+export const Post = ({ title = "default post title", content = "default post content" }) => {
+```
+
+- `export const Post` declares and exports a functional React component named `Post`.
+- `({ title = "default post title", content = "default post content" })` is the destructuring part. It means that when you use this component, you can provide an object with `title` and `content` properties as props. The `title` and `content` variables will be extracted from the props object, and if they are not provided as props, they will default to `"default post title"` and `"default post content"`, respectively.
+
+This syntax allows you to pass props to the component in a concise and readable way. For example, you can use the component like this:
+
+```jsx
+<Post title="Custom Title" content="Custom Content" />
+```
+
+In this usage, you're explicitly providing `title` and `content` as props, and they will override the default values. If you don't provide these props, the default values will be used.
+
+The `{}` in the function parameter is not related to JSX curly braces `{}` used for defining JSX elements; it's a JavaScript syntax for object destructuring.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13)
+PROBLEM: When page reloaded
+Uncaught TypeError: Cannot read properties of null (reading 'content')
+
+export const NewFeed = () => {
+    const [postContent, setPostContent] = useState(null)
+    useEffect(() => {
+        loadAllPosts().then(data => {
+            console.log(data)
+            setPostContent(data)
+        }).catch(error => {
+            console.log(error)
+        })
+        //load all posts from server
+    }, [])
+
+    return (
+        <div className="container-fluid">
+            <Row>
+                <Col md={
+                    {
+                        size: 10,
+                        offset: 1
+                    }
+                }>
+                    <h1>Blogs Count ({postContent?.totalElements})</h1>
+                    {
+                        postContent.content.map((post)=>(
+                            <Post post={post}/>
+                        ))
+                    }
+                </Col>
+            </Row>
+        </div>
+    )
+}
+
+export default NewFeed
+
+
+
+
+SOLUTION:
+
+
+
+
+
+
+
+
+
+
+
+
+
+14)
+PROBLEM:  Why and how is GET firing twice once with undefined image, and then once again to actually get the image, I didn't instruct it to fire again, whether or not if it get's the image
+
+import { Link, useParams } from "react-router-dom"
+import Base from "../components/Base"
+import { Card, CardBody, CardText, Col, Container, Row } from "reactstrap"
+import { useEffect, useState } from "react"
+import { loadPost } from "../servicesArea/PostService"
+import { toast } from "react-toastify"
+import { BASE_URL } from "../servicesArea/helper"
+
+const PostPage = () => {
+
+    //destructuring postId coming in useParams though data has id parameter, so using data we can do
+    // data.id to get post id but to get post id directly we would've to use postId to access global
+    // context variable
+    const { postId } = useParams()
+    console.log("PostId by useParams:", postId);
+
+    //store post data temporarily using stateManagement
+    const [post, setPost] = useState(() => [])
+
+    // load post of given postId
+    useEffect(() => {
+        //check if postId is defined before making the GET request for the image
+        if (postId) {
+
+            loadPost(postId)
+                .then(data => {
+                    console.log("postId from useEffect of PostPage: ", postId)
+                    console.log(data)
+                    setPost(data)
+                }).catch(error => {
+                    console.log("Error ", error);
+                    toast.error("error in laoading post")
+                })
+        }
+    }, [postId]); // Add postId as a dependency to re-run the effect when it changes
+
+    const printDate = (numbers) => {
+        return new Date(numbers).toLocaleString()
+    }
+
+    // const loadImage = () => {
+    //     if (post.imageName) {
+    //         return BASE_URL + "/post/images/" + post.imageName;
+    //     } else {
+    //         // Handle the case where post or imageName is not defined
+    //         console.log("Post or imageName is not defined.");
+    //         return ""; // or provide a default image URL
+    //     }
+    // }
+
+    return (
+        <Base>
+            <Container className="mt-4">
+                <Link to='/'>Home</Link>
+                <Row>
+                    <Col md={{
+                        size: 12
+                    }}>
+                        <Card className="mt-3">
+                            <CardBody>
+                                <CardText>
+                                    {/* on reloading the page, Uncaught TypeError: Cannot read properties 
+                                    of undefined (reading 'name'): Use type safe operator */}
+                                    Posted by <b>{post.user?.name}</b> on <b>{printDate(post.addedDate)}</b>
+                                </CardText>
+                                <CardText className="mt-3">
+                                    <h3>{post.title}</h3>
+                                </CardText>
+                                <div className="image-container mt-3">
+                                    {/* <img className="image-fluid" src={loadImage()} alt="jack-grease" /> */}
+                                    <img className="image-fluid" src={BASE_URL + "/post/images/" + post.imageName} alt="jack-grease" />
+                                </div>
+                            </CardBody>
+                        </Card>
+
+                    </Col>
+                </Row>
+            </Container>
+        </Base>
+    )
+}
+
+
+export default PostPage
+
+
+
+
+SOLUTION: Couldn't solve the `WHY` of two firing of GET requests, but did handle it using an if else condition
+
+used this if else
+==============================================================================================
+    // const loadImage = () => {
+    //     if (post.imageName) {
+    //         return BASE_URL + "/post/images/" + post.imageName;
+    //     } else {
+    //         // Handle the case where post or imageName is not defined
+    //         console.log("Post or imageName is not defined.");
+    //         return ""; // or provide a default image URL
+    //     }
+    // }
+==============================================================================================
+
+and fired loadImage from src={loadImage()}
+
+
+
+
+
+
+
+
+
+15)
+PROBLEM:
+Uncaught Error: Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\Users\abhis\Desktop\Project\Personal Projects With Credits Of Durgesh Sir\Blogging Application\Blogging Frontend ReactJs\blog-app-react\src\pages\PostPage.jsx: Unexpected token (73:87) (at Login.js:129:1)
+
+
+
+SOLUTION:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+16)
+PROBLEM:	POST http://localhost:5000/api/v1/post/23/comments 404 (Not Found)
+		error: "Not Found"
+		message: "No message available"
+
+
+SOLUTION:	POST http://localhost:5000/api/v1/post/23/comment 404 (Not Found)	------------> Incorrect URL comments -> comment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17)
+PROBLEM:
+	    const [comment, setComment] = useState({
+	        //use same property name as server side code: Comment Entity has content field and not comment field
+	        content: ''
+	    })
+
+SOLUTION:
+	public class Comment extends BaseEntity{
+		private String content;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+18)
+PROBLEM:
+Hi Durgesh, I have added user in commentDTO but facing issues to set the user. Can you please add which user have commented?
+
+1. Add private string commentusername in comment.java file(Entity file)
+2. In comment service class, after finding user by id and while saving comment set commentusername like this  
+      User user = this.userRepo.findById(userId).orElseThrow.......................
+      Comment comment = this.mapper.map(commentDto, Comment.class);
+      comment.setCommentUserName(user.getName());
+3. Add private  private string commentusername in commentDTO.java file to get name in response
+
+
+
+
+SOLUTION:
+
+
+
+
+
+19)
+PROBLEM:    I encountered this problem, once I completed the implementation of Infinite scroll by durgesh, next as I logged in the userDashboard underwent infinite scrolling down, with the navbar elongating endlessly untill max call stack size exceeded
+
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+Uncaught RangeError: Maximum call stack size exceeded
+
+SOLUTION:
+
+
+
+
+
+20)
+PROBLEM:
+message: "Required request part 'image' is not present"
+
+
+
+SOLUTION:
+    //handling file change event
+    const handleFileChange=(event)=>{
+        console.log(event.target.files[0])
+        // setImage(event.target.files[0])		-------------> We were not sending the image itself using setImage
+    }
+
+
+
+
+21)
+PROBLEM:
+TypeError: data is not iterable
+    at Categories.jsx:20:1
+
+    const { categoryId } = useParams()
+    useEffect(() => {
+        console.log(categoryId)
+        loadPostCategoryWise(categoryId).then(data=>{
+            setPosts([...data])				---------------------> Not Iterable
+            setPosts([...data.content])			---------------------> Content of Array(5) ---------->Iterable
+        }).catch(error=>{
+            console.log(error)
+            toast.error("error in loading posts")
+        })
+    },[])
+
+
+SOLUTION:
+{content: Array(5), pageNumber: 0, pageSize: 10, totalElements: 5, totalPages: 1, …}
+content: Array(5)
+	0: {id: 16, title: 'Brighton Fc', content: '<p>DOrtmund of epl</p>', imageName: 'default.png', addedDate: 1696075963125, …}
+	1: {id: 17, title: 'Brighton Fc', content: '<p>DOrtmund of epl</p>', imageName: 'default.png', addedDate: 1696075990846, …}
+	2: {id: 18, title: 'Brentford', content: '<p>econoical</p>', imageName: 'default.png', addedDate: 1696076164821, …}
+	3: {id: 23, title: 'post no 11', content: '<p>11th post</p>', imageName: 'default.png', addedDate: 1696089877707, …}
+	4: {id: 25, title: 'Uploading image test 2', content: '<p>try 2 image upload -3</p>', imageName: 'default.png', addedDate: 1696242560285, …}
+	length: 5
+[[Prototype]]: Array(0)
+lastPage: true
+pageNumber: 0
+pageSize: 10
+totalElements: 5
+totalPages: 1
+[[Prototype]]: Object
+
+
+22)
+PROBLEM: 
+Post.jsx:29  Uncaught TypeError: deletePost is not a function
+    at Object.onClick (Post.jsx:29:1)
+
+=====================================================================================================================================
+Post.jsx
+
+export const Post = ({ post = { id: -1, title: "default post tilte", content: "default post content" }, deletePost }) => {
+
+                    <div>
+                        <Link to={"/posts/" + post?.id} className='btn btn-secondary'>Read More</Link>
+                        {isLoggedIn && (user && user.id == post.user.id ? <Button onClick={() => deletePost(post)} color='danger' className='ms-2'>Delete</Button> : '')}
+                    </div>
+=====================================================================================================================================
+=====================================================================================================================================
+PostService.js
+
+//delete post
+export function deletePostService(postId){
+    return privateAxios.delete(`/posts/${postId}`).then(response=>response.data)
+}
+=====================================================================================================================================
+=====================================================================================================================================
+NewFeed.jsx
+
+  // function to delete post
+  function deletePostUtility(post) {
+    console.log("post from deletePost: ", post)
+    //going to delete post
+    deletePostService(post.id).then(data => {
+
+``````````````````````````````````````````````````````````````````````````````````````````````````
+
+                        {
+                            postContent.content.map((post) => (
+                                <Post deletePost={post} key={post.id} post={post} />			
+                                <Post deletePost={deletePostUtility} key={post.id} post={post} />		SOLUTION:----------------->	     post=>deletePostUtility 
+                            ))
+                        }
+                    </InfiniteScroll>
+
+=====================================================================================================================================
+=====================================================================================================================================
+
+
+
+23)
+PROBLEM:
+Warning: Encountered two children with the same key, `19`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+
+
+SOLUTION:
+
+
+
+
+
+
+
+
+
+24)
+PROBLEM:
+message: "Required URI template variable 'postId' for method parameter type Integer is not present"
+trace: "org.springframework.web.bind.MissingPathVariableException: Required URI template variable 'postId' for method parameter type Integer is not present
+
+SOLUTION:
+				===============Backend mapping==================
+
+	// update by id
+	@PutMapping("/posts/{postID}")						Solution------postID instead of postId
+	public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable Integer postId) {
+
+		PostDto updatedPost = this.postService.updatePost(postDto, postId);
+		return new ResponseEntity<PostDto>(updatedPost, HttpStatus.OK);
+	}
+				===============Backend mapping==================
+
+				===============Frontend mapping==================
+	//update post
+	export function updatePostService(post, postId) {
+	    console.log("post from update post service: ",post)
+	    return privateAxios.put(`/posts/${postId}`, post).then((resp) => resp.data)
+	}
+
+
+				===============Frontend mapping==================
+
+
+25)
+PROBLEM:
+	PUT http://localhost:5000/api/v1/posts/1 404 (Not Found)
+	message: "Post  not found with  PostId  : 1"
+
+
+	message: "No value present"
+	path: "/api/v1/posts/19"
+	status: 500
+	trace: "java.util.NoSuchElementException: No value present
+	
+	java.util.NoSuchElementException: No value present
+		at java.base/java.util.Optional.get(Optional.java:148) ~[na:na]
+===============================================================================================================================
+===============================================================================================================================
+The most common scenario for this exception to be thrown is when you use the get() method on an Optional object that is empty (i.e., it doesn't contain a value).
+
+Optional<String> optionalString = Optional.empty();
+String value = optionalString.get(); // This will throw the exception
+Understanding the Problem
+The Optional class was introduced to help Java developers handle cases where a value might be absent without having to use null. Instead of returning null values and risking NullPointerExceptions, you can return an Optional that clearly signals the possibility of an absent value. 
+
+However, care must be taken when trying to retrieve the value contained within an Optional. Simply calling get() without checking if a value is present can lead to the NoSuchElementException.
+===============================================================================================================================
+===============================================================================================================================
+How to Avoid the Exception? 
+Using isPresent() Before get(): 
+You can check if a value is present before trying to retrieve it.
+
+if(optionalString.isPresent()) {
+    String value = optionalString.get();
+}
+Using orElse(): 
+Provide a default value if the Optional is empty.
+
+String value = optionalString.orElse("Default Value");
+Using orElseGet(): 
+Provide a default value through a Supplier function.
+
+String value = optionalString.orElseGet(() -> "Generated Default Value");
+Using ifPresent():
+Only act if a value is present.
+
+optionalString.ifPresent(val -> System.out.println("Value is: " + val));
+Avoid Using get() Directly: 
+As a best practice, try not to use the get() method directly without checking for the presence of a value or providing a default value. Some even suggest that the get() method is an anti-pattern and should be avoided.
+===============================================================================================================================
+===============================================================================================================================
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+    //update post function
+    const updatePost = (event) => {
+        event.preventDefault()
+        console.log("postDto from updatePost of UpdateBlog: ", post)
+        // updatePostService({ ...post, category: { categoryId: post.categoryId } }, post.postId)
+        updatePostService({ ...post, category: { categoryId: post.categoryId } }, post.id)
+            .then(resp => {
+                console.log(resp)
+                toast.success("post updated")
+            })
+
+
+
+
+SOLUTION:
+https://www.javaguides.net/2023/08/javautilnosuchelementexception-no-value.html
+
+	//get category using the the category id from postDto, if no cat id was passed in dto, use the same category as previous from older post itself
+	Category newCategory = this.categoryRepo.findById(postDto.getCategory().getId());			-----> causes NoElementException if no category id is passed in dto, if passed one doesn't exist
+	
+	HENCE, good programming practice is to write it like this	------->
+	Category newCategory = this.categoryRepo.findById(postDto.getCategory().getId()).orElse(postFetched.getCategory());
+
+
+
+
+
+
+
+
+26)
+
+PROBLEM:		Update Post (404 post with `id` not found)
+
+
+PUT http://localhost:5000/api/v1/posts/1 404 (Not Found)
+	message: "Post  not found with  PostId  : 1"
+
+PostService.js
+```
+//update post
+export function updatePostService(post, postId) {
+    console.log("post from update post service: ",post)
+    return privateAxios.put(`/posts/${postId}`, post).then((resp) => resp.data)
+}
+```
+
+UpdateBlog.js
+```
+    //load all categories to be used in select input bar
+    useEffect(() => {
+        loadAllCategories().then((data) => {
+            console.log("loadAllCategories: ", data)
+            setCategories(data)
+        }).catch(error => {
+            console.log(error)
+        })
+
+        //load blog form database
+        loadPost(blogId).then(data => {
+            // durgesh has categoryId as his id field of category array, i'll use id
+            // setPost({ ...data, categoryId: data.category.id })
+            console.log("data.category.id from loadPost in id value: ", data)
+
+
+                                CORRECT 
+            setPost({ ...data, id: data.id })
+
+
+                                INCORRECT
+            setPost({ ...data, id: data.category.id })
+
+            console.log("data.category.id from loadPost in id value after setting id: data.category.id=>", data)
+        })
+```
+								                    
+								
+CORRECT - HANDLE THE CATEGORY CASE - READ SELECT
+```
+    const handleChange = (event, fieldName) => {
+        if (fieldName === 'category.id') {
+            setPost({
+                ...post,
+                category: { id: event.target.value }
+            });
+        } else {
+            setPost({
+                ...post,
+                [fieldName]: event.target.value
+            });
+        }
+    }
+```
+								            VS
+```
+    const handleChange = (event, fieldName) => {
+        setPost({
+            ...post,
+            [fieldName]: event.target.value
+        })
+    }
+```
+
+
+
+```
+    //update post function
+    const updatePost = (event) => {
+        event.preventDefault()
+        console.log("postDto from updatePost of UpdateBlog: ", post)
+        // updatePostService({ ...post, category: { categoryId: post.categoryId } }, post.postId)
+                                        category: NOT NEEDED
+        updatePostService({ ...post, category: { id: post.category.id } }, post.id)
+                               ENOUGH
+        updatePostService({ ...post }, post.id)
+            .then(resp => {
+                console.log(resp)
+                toast.success("post updated")
+            })
+            .catch(error => {
+                console.log(error)
+                toast.error("error in updateing the post")
+            })
+    }
+```
+
+
+
+
+SELECT Category Field
+```
+                            <div className="my-2">
+                                <Label for="category">Post Category</Label>
+                                <Input
+                                    type="select"
+                                    // id="category"
+                                    id="categoryId"
+                                    title="Select a Category"
+                                    placeholder="Enter here"
+                                    name="categoryId"
+
+
+
+                                                                            CORRECT
+                                    onChange={(event) => handleChange(event, 'category.id')}
+
+
+
+
+INCORRECT: updates the post id, we've to update the category id, this is used along with a modified handleChange function
+                                    onChange={(event) => handleChange(event, 'id')}
+
+
+
+
+                                    value={post.category.id}
+                                // value={post.categoryId}
+```
